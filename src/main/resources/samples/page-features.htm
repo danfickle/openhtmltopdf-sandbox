@@ -1,0 +1,285 @@
+<html>
+<head>
+<style>
+@page {
+	/*
+	 * Size can be a length (not a percentage) for width and height
+	 * or a standard page size such as: 
+	 * a4, a5, a3, b3, b4, letter, legal, ledger.
+	 * A standard page size can be followed by either 'portrait' or 'landscape'.
+	 *
+	 * In theory, you can use different page sizes in one document, but this renderer
+	 * currently uses the first page width as the width of the body. That means it
+	 * is only practical to use different page heights in the one document.
+	 * See danfickle/openhtmltopdf#176 or #119 for more information.
+	 */
+	size: 500px 1000px;
+	
+	/*
+	 * Margin box for each page. Accepts one-to-four values, similar
+	 * to normal margin property.
+	 */
+	margin: 50px;
+	
+	/*
+	 * Boxes to sit in the margin area. Can be one of:
+	 * top-left-corner, top-left, top-center, top-right, top-right-corner
+	 * bottom-left-corner, bottom-left, bottom-center, bottom-right, bottom-right-corner
+	 * left-top, left-middle, left-bottom,
+	 * right-top, right-middle, right-bottom.
+	 *
+	 * Useful for things such as page counters, etc.
+	 */
+	@top-left {
+	  content: counter(page);	
+	}
+	
+	@bottom-center {
+	  content: 'You are on ' counter(page) ' of ' counter(pages);	
+	}
+	
+	@bottom-right {
+	   /* We can also place an element in a margin box. This allows for formatting
+	    * of content in the margin box. The element must have a position of a named
+	    * running position. Any name can be used, provided it is a valid CSS identifier. */
+	   content: element(header);	
+	}
+}
+
+/* Possible pseudo page matchers are first, left and right.
+ * By convention the first page is right. */
+@page:first {
+    @top-center {
+      content: 'first';	
+     }
+}
+@page:left {
+    @top-right {
+       content: 'left';	
+    }	
+}
+@page:right {
+   @bottom-left {
+     content: 'right';	
+   }	
+}
+
+/*
+ * An element can be placed on a named page. Any name can be used provided it is
+ * a valid CSS identifier. Elements are placed on this page using the page property.
+ */
+@page named {
+   @top-center {
+   	 content: 'You are on a named page for a change!';
+   }
+}
+
+/* The body margin is in addition to the page margin,
+ * but the top body margin only applies to the first page and 
+ * the bottom margin to the last page. */
+body {
+  margin: 0;	
+}
+
+/*
+ * NOTE: The element names here are made up to illustrate a concept.
+ * As the renderer works with XML, you can use any XML valid element name.
+ */
+
+page-after {
+  /* Most page elements only work on block or block-like elements. */
+  display: block;
+  /* Create a page break after this element. */
+  page-break-after: always;	
+}
+
+page-before {
+  display: block;
+  /* Create a page break before this element. */
+  page-break-before: always;	
+}
+
+.toc li::after {
+  /* The target-counter function is useful for creating a 
+   * table-of-contents or directing the user to a specific page.
+   * It takes as its first argument the hash link (in the form #id)
+   * to the element and returns the page that element is located on.
+   * We can use the attr function to pick up the href from the html. */
+  content: leader(dotted) target-counter(attr(href), page);
+}
+
+page-inside-avoid {
+  display:block;
+  height: 750px;
+  /* With page-break-inside the renderer will try (if possible) to 
+   * avoid page breaks inside an element. */
+  page-break-inside: avoid;
+}
+
+running {
+  /* We mark this element as running by using the running function 
+   * to specify a named position. The name can be any valid CSS identifier.
+   * See the @page rule above. */
+  position: running(header);
+}
+
+/* The widows property allows us to specify the minimum number of lines
+ * to fall onto the next page, if there is a page break inside our element.
+ * For example, you can use this to avoid a single line falling onto a
+ * new page. The widows property is satisfied by inserting space above 
+ * the widows count of lines to make them fall onto a new page.
+ *
+ * Try: Changing widows to 0 and seeing how many lines are left on the new
+ * page. The default initial value of widows is 2.
+ */
+widows {
+  padding: 0 10px;
+  border: 1px solid red;
+  page-break-before: always;
+  display: block;
+  widows: 5;
+  line-height: 20px;
+  font-size: 16px;
+  margin-top: 698px;
+}
+
+spacer {
+  page-break-before: always;
+  display:block;
+  height: 878px;	
+}
+spacer.four-lines {
+  height: 798px;	
+}
+
+/* Orphans property is the pair of widows. It allows the author to specify
+ * the minimum number of lines that should occur on the page before a 
+ * page-break. For example, we might want to prevent one line on the first page,
+ * followed by ten lines on the next.
+ * This property is satisfied by adding a new page before the element, if the 
+ * orphans constraint is violated.
+ */
+orphans {
+  padding: 0 10px;
+  border: 1px solid green;
+  display: block;
+  widows: 0;
+  orphans: 3;
+  line-height: 20px;
+  font-size: 16px;
+}
+
+td, th {
+  	border-bottom: 1px dashed gray;
+}
+table {
+   /* With -fs-table-paginate on, the header and footer
+    * of a table will be repeated on each page that the table falls on.
+    */
+   -fs-table-paginate: paginate;
+   
+   /* Similar to the orphans property, this property allows the author
+    * to specify how much of the block must show before a page-break.
+    * If the constraint is violated, a page break is added before the element.
+    * Very useful on elements not made of lines, such as tables, etc.
+    * TRY: Uncomment this property and see how the table moves to a new page
+    * to satisfy the constraint.
+    */
+    /* -fs-page-break-min-height: 100px; */
+}
+
+named-page {
+  page-break-before: always;
+  /* The page property allows us to marry up an element with a @page rule. */
+  page: named;
+  display: block;
+}
+</style>
+</head>
+<body>
+<ul class="toc">
+ <li href="#p1">Page: </li>
+ <li href="#p4">Page: </li>
+</ul>
+
+<running id="run">The <strong>chicken</strong> <i>crossed</i>
+<span style="color: green;">the</span> <span style="background-color: red;">road</span>.</running>
+
+
+<page-after id="p1">Page 1</page-after>
+<page-after>Page 2</page-after>
+<page-after>Page 3</page-after>
+<page-after id="p4">Page 4</page-after>
+<page-after>Page 5</page-after>
+
+<page-before>Page 6</page-before>
+<page-before>Page 7</page-before>
+
+<page-inside-avoid>Page 7.1</page-inside-avoid>
+<page-inside-avoid>Page 8</page-inside-avoid>
+
+<widows>
+Line 1<br/>
+Line 2<br/>
+Line 3<br/>
+Line 4<br/>
+Line 5<br/>
+Line 6<br/>
+Line 7<br/>
+Line 8<br/>
+Line 9<br/>
+Line 10<br/>
+Line 11
+</widows>
+
+<spacer/>
+
+<orphans>
+Line 1<br/>
+Line 2<br/>
+Line 3<br/>
+Line 4<br/>
+Line 5<br/>
+Line 6<br/>
+Line 7<br/>
+Line 8<br/>
+Line 9<br/>
+Line 10<br/>
+Line 11
+</orphans>
+
+<spacer class="four-lines"/>
+
+<table>
+  <caption>Paginated Table</caption>
+
+  <thead>
+    <tr><th>Title 1.1</th><th>Title 1.2</th></tr>
+  </thead>
+  
+  <tfoot>
+    <tr><td>Footer 1.1</td><td>Footer 1.2</td></tr>
+  </tfoot>
+  
+  <tbody>
+    <tr><td>Cell 1.1</td><td>Cell 1.2</td></tr>
+    <tr><td>Cell 2.1</td><td>Cell 2.2</td></tr>
+    <tr><td>Cell 3.1</td><td>Cell 3.2</td></tr>
+    <tr><td>Cell 4.1</td><td>Cell 4.2</td></tr>
+    <tr><td>Cell 5.1</td><td>Cell 5.2</td></tr>
+    <tr><td>Cell 6.1</td><td>Cell 6.2</td></tr>
+    <tr><td>Cell 7.1</td><td>Cell 7.2</td></tr>
+    <tr><td>Cell 8.1</td><td>Cell 8.2</td></tr>
+    <tr><td>Cell 9.1</td><td>Cell 9.2</td></tr>
+    <tr><td>Cell 10.1</td><td>Cell 10.2</td></tr>
+  </tbody>
+</table>
+
+<named-page>
+Some content on a named page<br/>
+More content on a named page<br/>
+</named-page>
+
+
+</body>
+</html>
