@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>OpenHTMLtoPDF.com Sandbox (HTML to PDF)</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <style>
+   #main-example-area
+   {
+     width: 100%;
+     min-height: 30em;
+   }
+   #main-preview-area
+   {
+     width: 100%;
+     min-height: 30em;
+   }
+   .action-btn
+   {
+     margin-bottom: 20px;
+   }
+  </style>
+</head>
+<body>
+ <div class="jumbotron">
+  <div class="container-fluid">
+    <h1>OpenHTMLtoPDF.com Sandbox</h1>   
+    <p>The OpenHTMLtoPDF project is an attempt to modernize Flying Saucer, the HTML to PDF solution for the JVM.</p>
+    <p>Here, you can try it out online by entering XHTML in the left pane and viewing a PDF in the right pane.</p>
+    <a class="btn btn-primary" href="https://github.com/danfickle/openhtmltopdf">OpenHTMLtoPDF at Github</a>
+    
+    <div style="margin-top: 10px;">
+    Try these examples:
+    <th:block th:each="ex, iterStat : ${examples.keySet()}">
+      <a class="example" th:text="${ex}" th:href="${'/?file=' + ex}"></a><span th:unless="${iterStat.last}">, </span>
+    </th:block>
+    </div>
+    
+  </div>
+ </div>
+ 
+ <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12 pull-right">
+     <button class="action-btn btn btn-success" type="button" id="pdf-preview-btn">PDF</button>
+     <button class="action-btn btn btn-warning" type="button" id="logs-preview-btn">Logs</button>
+    </div>
+   </div>
+
+   <div class="row">
+     <div class="col-md-6">
+<textarea id="main-example-area" th:text="${example}">&lt;html&gt;
+&lt;head&gt;
+&lt;style&gt;
+/* The following fonts are installed on the server: */
+.handwriting {
+  font-family: 'handwriting', serif;
+}
+.arabic {
+  font-family: 'arabic', serif;
+}
+.deja {
+  /* Contains glyphs for many languages. */
+  font-family: 'deja-sans', sans-serif;
+}
+.cjk {
+  font-family: 'cjk';
+}
+/*
+Also you can use the PDF built-in fonts: 
+ - sans-serif
+ - serif
+ - monospace
+*/
+body {
+  font-family: 'handwriting', 'deja-sans', 'cjk', 'arabic', sans-serif, serif;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body dir="auto"&gt;
+
+&lt;div class=&quot;handwriting&quot; style=&quot;text-align:center;font-size: 90px;color:orange;&quot;&gt;
+Hello World!
+&lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+     </div>
+     
+     <div class="col-md-6">
+      <iframe id="main-preview-area">
+      
+      
+      
+      </iframe>
+     </div>
+   </div>
+ </div>
+
+ <script>
+  function makeClickFunc(type) {
+    return function() {
+      var html = $('#main-example-area').val();
+      var iframe = '<html><body><form action="/post-' + type + '" method="post">' +
+                 '<input type="hidden" name="upload-area" id="main-upload-area"></form></body></html>';
+      $('#main-preview-area').replaceWith('<iframe id="main-preview-area"></iframe>');
+      $('#main-preview-area').contents().find('html').html(iframe);
+      $('#main-preview-area').contents().find('#main-upload-area').val(html);
+      $('#main-preview-area').contents().find('form').submit();
+    }
+  }
+ 
+  $('#pdf-preview-btn').click(makeClickFunc('pdf'));
+  $('#logs-preview-btn').click(makeClickFunc('logs'));
+ </script>
+</body>
+</html>
