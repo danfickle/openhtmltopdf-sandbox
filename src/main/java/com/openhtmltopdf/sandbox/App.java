@@ -1,19 +1,21 @@
 package com.openhtmltopdf.sandbox;
-import static spark.Spark.*;
+import static spark.Spark.get;
+import static spark.Spark.port;
+import static spark.Spark.post;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletOutputStream;
 
@@ -29,33 +31,56 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder.CacheStore;
 import com.openhtmltopdf.util.Diagnostic;
 
+import org.apache.pdfbox.io.IOUtils;
+
 import spark.ModelAndView;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
 
 public class App
 {
-    private static final Map<String, String> EXAMPLES = loadExamples();
-    
-    private static void loadExample(Path p, Map<String, String> map) {
-        byte[] example;
-        try {
-            example = Files.readAllBytes(p);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
+    private enum Sample {
+        HELLO_WORLD,
+        INVOICE,
+        CJK,
+        PAGE_FEATURES;
+    }
+
+    private enum FontSample {
+        HANDWRITING("JustAnotherHand.ttf", "handwriting"),
+        ARABIC("NotoNaskhArabic-Regular.ttf", "arabic"),
+        DEJA_SANS("DejaVuSans.ttf", "deja-sans"),
+        CJK("NotoSansCJKtc-Regular.ttf", "cjk");
+
+        private String resFile;
+        private String fontFamily;
+
+        FontSample(String resFile, String fontFamily) {
+          this.resFile = resFile;
+          this.fontFamily = fontFamily;
         }
-        String exampleStr = new String(example, StandardCharsets.UTF_8);
-        String filename = p.getFileName().toString();
-        map.put(filename, exampleStr);
+    }
+
+    private static final Map<String, String> EXAMPLES = loadExamples();
+
+    private static void loadExample(Sample sample, Map<String, String> map) {
+        String resFile = sample.name().toLowerCase(Locale.US).replace('_', '-') + ".htm";
+
+        try (InputStream is = App.class.getResourceAsStream("/samples/" + resFile)) {
+            String resContents = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
+            System.out.format("Loaded resource file '%s' with %d chars.", resFile, resContents.length());
+            map.put(resFile, resContents);
+        } catch (IOException e) {
+            System.err.format("Unable to read resource '%s'.", resFile);  
+            e.printStackTrace();
+        }
     }
     
     private static Map<String, String> loadExamples() {
-        Map<String, String> map = new HashMap<>();
-        try {
-            Files.list(Paths.get(System.getProperty("user.home"), "Documents", "sandbox-examples")).forEach(p -> loadExample(p, map));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Map<String, String> map = new ConcurrentHashMap<>();
+
+        Stream.of(Sample.values())
+          .forEach(sample -> loadExample(sample, map));
+
         return map;
     }
     
@@ -80,10 +105,8 @@ public class App
         
         builder.useCacheStore(CacheStore.PDF_FONT_METRICS, cache);
 
-        builder.useFont(() -> App.class.getResourceAsStream("/fonts/JustAnotherHand.ttf"), "handwriting");
-        builder.useFont(() -> App.class.getResourceAsStream("/fonts/NotoNaskhArabic-Regular.ttf"), "arabic");
-        builder.useFont(() -> App.class.getResourceAsStream("/fonts/DejaVuSans.ttf"), "deja-sans");
-        builder.useFont(() -> App.class.getResourceAsStream("/fonts/NotoSansCJKtc-Regular.ttf"), "cjk");
+        Stream.of(FontSample.values())
+          .forEach(font -> builder.useFont(() -> App.class.getResourceAsStream("/fonts/" + font.resFile), font.fontFamily));  
 
         builder.useFastMode();
         
