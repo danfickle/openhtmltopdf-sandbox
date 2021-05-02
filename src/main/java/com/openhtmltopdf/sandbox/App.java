@@ -44,7 +44,8 @@ public class App
         HELLO_WORLD,
         INVOICE,
         CJK,
-        PAGE_FEATURES;
+        PAGE_FEATURES,
+        PAGINATED_TABLE;
     }
 
     private enum FontSample {
@@ -64,8 +65,12 @@ public class App
 
     private static final Map<String, String> EXAMPLES = loadExamples();
 
+    private static String sampleName(Sample sample) {
+      return sample.name().toLowerCase(Locale.US).replace('_', '-');
+    }
+
     private static void loadExample(Sample sample, Map<String, String> map) {
-        String resFile = sample.name().toLowerCase(Locale.US).replace('_', '-') + ".htm";
+        String resFile = sampleName(sample) + ".htm";
 
         try (InputStream is = App.class.getResourceAsStream("/samples/" + resFile)) {
             String resContents = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
@@ -126,7 +131,7 @@ public class App
         	Map<String, Object> vars = new HashMap<>();
         	String file = req.queryParamOrDefault("file", "hello-world.htm");
         	
-        	vars.put("examples", EXAMPLES);
+        	vars.put("examples", Stream.of(Sample.values()).map(App::sampleName).collect(Collectors.toList()));
         	vars.put("example", EXAMPLES.get(file));
         	vars.put("file", file);
         	

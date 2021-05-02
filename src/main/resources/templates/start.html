@@ -33,8 +33,8 @@
     
     <div style="margin-top: 10px;">
     Try these examples:
-    <th:block th:each="ex, iterStat : ${examples.keySet()}">
-      <a class="example" th:text="${ex}" th:href="${'/?file=' + ex}"></a><span th:unless="${iterStat.last}">, </span>
+    <th:block th:each="ex, iterStat : ${examples}">
+      <a class="example" th:text="${ex}" th:href="${'/?file=' + ex + '.htm'}"></a><span th:unless="${iterStat.last}">, </span>
     </th:block>
     </div>
     
