@@ -30,8 +30,10 @@ import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder.TextDirection;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder.CacheStore;
 import com.openhtmltopdf.util.Diagnostic;
+import com.openhtmltopdf.util.XRRuntimeException;
 
 import org.apache.pdfbox.io.IOUtils;
+import org.xml.sax.SAXParseException;
 
 import spark.ModelAndView;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
@@ -135,14 +137,28 @@ public class App
             res.header("Content-Type", "text/plain");
             res.header("X-Content-Type-Options", "nosniff");
 
+            String xml = req.queryParams("upload-area");
+
+            if (xml == null || xml.isEmpty()) {
+                return "FATAL: No content provided!";
+            }
+
             List<Diagnostic> logs = new ArrayList<>();
 
             try (ByteArrayOutputStream os = new ByteArrayOutputStream(16000)) {
-                PdfRendererBuilder builder = standardBuilder(req.queryParams("upload-area"), cache);
+                PdfRendererBuilder builder = standardBuilder(xml, cache);
 
                 builder.toStream(os);
                 builder.withDiagnosticConsumer(logs::add);
-                builder.run();
+
+                try {
+                    builder.run();
+                } catch (XRRuntimeException re) {
+                    if (re.getCause() instanceof SAXParseException) {
+                        return "FATAL: Could not load XML!\r\n" +
+                          re.getCause().getMessage();
+                    }
+                }
             }
             
             return logs.stream()
