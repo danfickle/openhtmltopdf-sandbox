@@ -6,6 +6,7 @@ import static spark.Spark.post;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import com.openhtmltopdf.bidi.support.ICUBreakers;
 import com.openhtmltopdf.bidi.support.ICUTransformers;
 import com.openhtmltopdf.extend.FSCacheEx;
 import com.openhtmltopdf.extend.FSCacheValue;
+import com.openhtmltopdf.extend.FSStream;
 import com.openhtmltopdf.extend.impl.FSDefaultCacheStore;
 import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder.TextDirection;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
@@ -97,8 +99,28 @@ public class App
         builder.withHtmlContent(html, null);
         
         builder.useUriResolver((base, uri) -> {
+            if (uri.equals("image:flyingsaucer.png")) {
+              return uri;
+            }
+
             return null;
         });
+
+        builder.useProtocolsStreamImplementation(
+          url -> new FSStream(){
+
+            @Override
+            public InputStream getStream() {
+                return App.class.getResourceAsStream("/images/flyingsaucer.png");
+            }
+
+            @Override
+            public Reader getReader() {
+              return null;
+            }
+            
+          }, "image");
+
         
         builder.useUnicodeBidiSplitter(new ICUBidiSplitter.ICUBidiSplitterFactory());
         builder.useUnicodeBidiReorderer(new ICUBidiReorderer());
