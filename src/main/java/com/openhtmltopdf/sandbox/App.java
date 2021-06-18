@@ -47,7 +47,8 @@ public class App
         INVOICE,
         CJK,
         PAGE_FEATURES,
-        PAGINATED_TABLE;
+        PAGINATED_TABLE,
+        SIDEBARS;
     }
 
     private enum FontSample {

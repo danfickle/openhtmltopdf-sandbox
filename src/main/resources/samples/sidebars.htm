@@ -1,0 +1,92 @@
+<html>
+<head>
+<style>
+  @page {
+    margin: 1cm;
+
+    @left-middle {
+      content: element(sidebar-l);
+    }
+    @right-middle {
+      content: element(sidebar-r);
+    }
+    @top-right {
+      content: "Page " counter(page) " of " counter(pages);
+      font-family: sans-serif;
+    }
+  }
+
+  html {
+    font-family: sans-serif;
+  }
+  .sidebar {
+    color: gray;
+    white-space: nowrap;
+    /* Gives a total height of 1cm */
+    font-size: 0.5cm;
+    line-height: 0.5cm;
+    padding: 0.25cm;
+  }
+  .sidebar::before {
+    content: "Produced with openhtmltopdf.com";
+  }
+  .sidebar.left {
+    transform-origin: left top;
+    /* Move box height into the page then rotate */
+    transform: translateX(1cm) rotate(90deg);
+  }
+  .sidebar.right {
+    transform-origin: left bottom;
+    /* Move box height to the right, rotate counter clockwise, then
+       move up to align with left sidebar. */
+    transform: translateX(1cm) rotate(-90deg) translateX(-100%);
+  }
+  .title {
+    text-align: center;
+    font-size: 90px;
+    color: orange;
+    background-image: linear-gradient(to top, white, #cfe1ee);
+    border: 1px solid gray;
+    border-radius: 10px;
+    margin-top: 3cm;
+  }
+  .image {
+    text-align: center;
+    transform: rotate(180deg);
+    margin: 2cm;
+    border: 2px solid gray;
+    border-radius: 20px;
+    padding: 1cm;
+  }
+  .scroll {
+    color: #cfe1ee;
+    width: 6cm;
+    letter-spacing: 1cm;
+    transform-origin: right top;
+    transform: translateX(100%) rotate(90deg) translateX(120%);
+    font-size: 1.5cm;
+  }
+</style>
+</head>
+<body>
+<div style="position: running(sidebar-l);">
+  <div class="sidebar left"></div>
+</div>
+
+<div style="position: running(sidebar-r);">
+  <div class="sidebar right"></div>
+</div>
+
+<div class="image">
+  <img src="image:flyingsaucer.png" alt="Visiting aliens (friendly)" />
+  <h2>Another upside down UFO!</h2>
+</div>
+
+<div class="scroll">&gt;&gt;&gt;</div>
+
+<div class="title">
+  Transforms &amp; Sidebars!
+</div>
+
+</body>
+</html>

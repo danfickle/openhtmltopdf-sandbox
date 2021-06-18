@@ -11,6 +11,12 @@
 
         /* The magical table pagination property. */
         -fs-table-paginate: paginate;
+
+        /* Recommended to avoid leaving thead on a page by itself. */
+        -fs-page-break-min-height: 1.5cm;
+      }
+      tr, thead, tfoot {
+        page-break-inside: avoid;
       }
       td, th {
         padding: 6px;
