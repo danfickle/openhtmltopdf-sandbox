@@ -1,0 +1,84 @@
+<html>
+<head>
+<style>
+@page {
+    @footnote {
+        /* Style the footnote area (which can contain multiple footnotes) for each page.
+         * If you don't need special styles for the footnote area, can be omitted. */
+        width: 100%;
+        border-top: 1px solid green;
+        padding-top: 20px;
+        /* Footnotes typically look better without constraints. */
+        orphans: 0;
+        widows: 0;
+    }
+}
+.footnote {
+  /* Mark an element to be removed from normal flow and placed at
+   * the bottom of the current page. */
+  float: footnote;
+  margin-top: 10px;
+}
+::footnote-call {
+  /* This is what is left in normal flow.
+     It is linkified to target the footnote itself. */
+  counter-increment: footnote 1;
+  content: "[" counter(footnote) "]";
+  color: blue;
+  text-decoration: underline;
+}
+::footnote-marker {
+  /* This is inserted at the start of the footnote. */
+  content: counter(footnote) ". ";
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  -fs-border-rendering: no-bevel;
+}
+td {
+  padding: 5px;
+  border: 1px solid gray;
+}
+</style>
+</head>
+<body>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed scelerisque purus et tincidunt viverra. Praesent ut erat iaculis, malesuada orci quis, accumsan tortor. In mattis risus vel ante laoreet, eget varius tortor placerat. Pellentesque ultrices odio non diam facilisis, id mattis nisi ultricies. Vivamus lacinia, mauris ut tempus ultricies, sapien lorem rhoncus turpis, vitae pellentesque elit tortor ac quam. Aliquam erat volutpat. Nam orci erat, interdum at massa ac, condimentum scelerisque arcu. Donec non lectus et nisl rutrum luctus. In sit amet velit augue.
+    <div class="footnote">This is a footnote.</div>
+    </p>
+    <p>
+    Maecenas velit arcu, feugiat ac sodales vitae, commodo eget leo. Nullam vitae erat nunc. Cras vel nulla felis. Fusce nec orci dictum, varius nulla ut, volutpat nunc. Duis dignissim placerat dignissim. Aliquam commodo augue quis leo accumsan fringilla. Aenean venenatis odio sed scelerisque gravida. Sed consectetur a mi vitae finibus. Proin fringilla justo at augue fringilla cursus. Nunc porttitor justo et est accumsan consequat. Maecenas ornare lorem ac lorem molestie tincidunt. Cras nec nisl in metus consectetur feugiat. Duis tincidunt massa in purus euismod pellentesque. Quisque varius tincidunt lectus, in suscipit lacus hendrerit quis. Donec sit amet pharetra sapien. Aliquam euismod eleifend turpis ac scelerisque.
+    <div class="footnote">Another <strong>footnote</strong>!</div>
+    </p>
+    <p>
+    Sed suscipit quam at est dapibus hendrerit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla ex eros, dictum a justo ac, auctor rutrum erat. Donec ac libero porttitor, consequat ante ac, consectetur augue. Suspendisse potenti. Etiam faucibus ut augue a vulputate. Nullam condimentum turpis id nibh vestibulum interdum. Sed a lectus volutpat, dapibus ligula vel, malesuada arcu. Praesent commodo, lorem at scelerisque mattis, mi odio cursus leo, at tristique elit tellus ut nisl. Nam vel mi id urna luctus finibus.
+    <div class="footnote">
+      Footnote with table:
+      <table style="margin-top: 15px;">
+        <tr><td>One</td><td>Two</td></tr>
+        <tr><td>Three</td><td>Four</td></tr>
+        <tr><td>Five</td><td>Six</td></tr>
+      </table>
+    </div>
+    </p>
+    <p>
+    Quisque venenatis nunc vitae nisl elementum posuere. Suspendisse tincidunt viverra ex, sed fringilla velit ultrices eu. Integer condimentum est est, in mollis mauris cursus vel. Donec pharetra placerat interdum. Morbi cursus justo quis laoreet auctor. Ut placerat lacinia suscipit. Sed orci ante, suscipit et varius a, varius eu urna. Duis id risus vehicula nibh congue cursus efficitur ac libero.
+    <div class="footnote" style="background-color: orange; color: white; padding: 10px;">
+      Footnote with background.
+    </div>
+    </p>
+    <p>
+    Nam congue feugiat eros et eleifend. Vestibulum at commodo metus, vel dictum risus. Sed imperdiet pulvinar imperdiet. In viverra lorem id nunc iaculis, et fringilla erat malesuada. Donec vitae dignissim urna. Etiam non felis lorem. Vivamus non augue vestibulum, iaculis augue id, fringilla dui. Curabitur in ipsum in neque aliquam tristique.
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed scelerisque purus et tincidunt viverra. Praesent ut erat iaculis, malesuada orci quis, accumsan tortor. In mattis risus vel ante laoreet, eget varius tortor placerat. Pellentesque ultrices odio non diam facilisis, id mattis nisi ultricies. Vivamus lacinia, mauris ut tempus ultricies, sapien lorem rhoncus turpis, vitae pellentesque elit tortor ac quam. Aliquam erat volutpat. Nam orci erat, interdum at massa ac, condimentum scelerisque arcu. Donec non lectus et nisl rutrum luctus. In sit amet velit augue.
+      <div class="footnote">Second last footnote.</div>
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed scelerisque purus et tincidunt viverra. Praesent ut erat iaculis, malesuada orci quis, accumsan tortor. In mattis risus vel ante laoreet, eget varius tortor placerat. Pellentesque ultrices odio non diam facilisis, id mattis nisi ultricies. Vivamus lacinia, mauris ut tempus ultricies, sapien lorem rhoncus turpis, vitae pellentesque elit tortor ac quam. Aliquam erat volutpat. Nam orci erat, interdum at massa ac, condimentum scelerisque arcu. Donec non lectus et nisl rutrum luctus. In sit amet velit augue.
+      <div class="footnote">Last footnote.</div>
+    </p>
+    
+</body>
+</html>

@@ -48,7 +48,8 @@ public class App
         CJK,
         PAGE_FEATURES,
         PAGINATED_TABLE,
-        SIDEBARS;
+        SIDEBARS,
+        FOOTNOTES;
     }
 
     private enum FontSample {
@@ -77,7 +78,7 @@ public class App
 
         try (InputStream is = App.class.getResourceAsStream("/samples/" + resFile)) {
             String resContents = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
-            System.out.format("Loaded resource file '%s' with %d chars.", resFile, resContents.length());
+            System.out.format("Loaded resource file '%s' with %d chars.\n", resFile, resContents.length());
             map.put(resFile, resContents);
         } catch (IOException e) {
             System.err.format("Unable to read resource '%s'.", resFile);  
