@@ -49,7 +49,8 @@ public class App
         PAGE_FEATURES,
         PAGINATED_TABLE,
         SIDEBARS,
-        FOOTNOTES;
+        FOOTNOTES,
+        MENU;
     }
 
     private enum FontSample {
